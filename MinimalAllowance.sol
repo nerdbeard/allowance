@@ -2,7 +2,7 @@ pragma solidity ^0.4.17;
 
 contract MinimalAllowance {
   address public owner;
-  address public benefactor;
+  address public payee;
   uint256 public rate;
   uint256 public paid;
   uint256 public commences;
@@ -10,13 +10,13 @@ contract MinimalAllowance {
   modifier afterCommencing { require(now >= commences); _; }
   modifier onlyOwner { require(msg.sender == owner); _; }
 
-  function MinimalAllowance(address _benefactor,
+  function MinimalAllowance(address _payee,
 			    uint256 _rate,
 			    uint256 _commences)
-    public
+    public payable
   {
     owner = msg.sender;
-    benefactor = _benefactor;
+    payee = _payee;
     rate = _rate;
     paid = 0;			/* I presume this is unneccesary. */
     commences = _commences;
@@ -26,15 +26,15 @@ contract MinimalAllowance {
     return commences + (paid + this.balance)/rate;
   }
 
-  function payBenefactor() public afterCommencing {
+  function payPayee() public afterCommencing {
     var owing = (now-commences)*rate-paid;
     require(owing > 0);
     paid += owing;
-    benefactor.transfer(owing);
+    payee.transfer(owing);
   }
 
   function burn() public onlyOwner {
-    payBenefactor();		/* Pay what is currently owed. */
+    payPayee();			/* Pay what is currently owed. */
     selfdestruct(this);		/* Burn the residue. */
   }
 }

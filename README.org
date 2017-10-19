@@ -18,13 +18,13 @@
     creation; typically to a third-party address or the burn address.
     "Remaning" is interpreted to mean the value excluding that which
     could presently be withdrawn.  This difference is considered
-    already owed and is sent to the benefactor address.
+    already owed and is sent to the payee address.
 ** Minimal Allowance
    Pays out over time from contract's creation value.  Does not
    accept additional funds.
 *** Data and views
     - address owner: can burn the contract
-    - address benefactor: receives payments
+    - address payee: receives payments
     - uint rate: Wei per second the contract pays out
     - int commences: (now - commences) * rate equals the max
       cumulative withdrawal
@@ -32,25 +32,25 @@
     - int completes(): commences+((withdrawn+value) / rate) which
       should be constant
 *** methods
-    - MinimalAllowance(benefactor, rate, commences): should be created
+    - MinimalAllowance(payee, rate, commences): should be created
       with ether value.  There is no other way to fund the contract.
-    - afterCommencing payBenefactor(): transfer all currently-owed
-      ether to benefactor.  If this payment reduces contract's value
+    - afterCommencing payPayee(): transfer all currently-owed
+      ether to payee.  If this payment reduces contract's value
       to zero, selfdestruct the contract.
-    - onlyOwner burn(): call payBenefactor() then selfdestruct,
+    - onlyOwner burn(): call payPayee() then selfdestruct,
       transfering ether to this contract's address.
 ** Extendable
    The contract accepts payment anytime after creation, extending the
    length of the allowance, perhaps by third parties.
 ** Cashout version
-   Owner can cashout the contract to the benefactor at any time.
+   Owner can cashout the contract to the payee at any time.
    This isn't in the basic version because a person might wish to
    create their own allowance contract and solicit people to send
    funds to it.  A use case would be to offer to perform a service
    for a community.  But then the community does not have the option
    to burn, so this whole idea needs some thought.
 *** methods
-    - onlyOwner cashout(): transfer all remaining ether to benefactor
+    - onlyOwner cashout(): transfer all remaining ether to payee
       and terminate contract
 ** burnAddress version
    Owner can set a burn address at contract creation time.  This will
@@ -58,7 +58,41 @@
 *** Data
     - address burnAddress
 *** methods
-    - onlyOwner burn(): call payBenefactor() then selfdestruct,
+    - onlyOwner burn(): call payPayee() then selfdestruct,
       transfering ether to burnaddress
 ** controlled payout version
-   Only owner can call payBenefactor()
+   Only owner can call payPayee()
+* Dev notes
+** Bookmark
+I am now creating contracts successfully and the contracts have the
+data expected, but calling any method on the contract results in an
+error:
+#+BEGIN_EXAMPLE
+> c.payPayee()
+
+Error: invalid address
+    at web3.js:3930:15
+    at web3.js:3756:20
+    at web3.js:5025:28
+    at map (<native code>)
+    at web3.js:5024:12
+    at web3.js:5050:18
+    at web3.js:5075:23
+    at web3.js:4137:16
+    at apply (<native code>)
+    at web3.js:4223:16
+
+> 
+#+END_EXAMPLE
+** Miner bug
+The miner will leave all transactions in pendingTransactions until it
+finishes syncing.  With no other miners, it will never finish syncing.
+
+As a workaround, it appears you can start/stop/start mining before any
+transactions occur, and future transactions will be processed.
+** Makefile
+Needs to manage a test database for testing purposes. [[https://ethereum.stackexchange.com/questions/2376/what-does-each-genesis-json-parameter-mean][This page]] has
+some good info about the genesis block.
+
+"geth attach" takes an argument, the path to the IPC socket.  It does
+not use --datadir or --ipcpath like other commands!
