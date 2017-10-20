@@ -5,7 +5,7 @@ var contractFactory=eth.contract(abi);
 var contract=contractFactory.new(
     eth.accounts[1],
     1,
-    1508452716,
+    $(date +%s),
     {value: 1977,
      from: eth.accounts[0],
      data: bin,
