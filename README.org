@@ -64,26 +64,14 @@
    Only owner can call payPayee()
 * Dev notes
 ** Bookmark
-I am now creating contracts successfully and the contracts have the
-data expected, but calling any method on the contract results in an
-error:
+I am now creating contracts successfully the contracts have the data
+expected, and I can call methods as long as I remember to specify the sender; eg: 
+
 #+BEGIN_EXAMPLE
-> c.payPayee()
-
-Error: invalid address
-    at web3.js:3930:15
-    at web3.js:3756:20
-    at web3.js:5025:28
-    at map (<native code>)
-    at web3.js:5024:12
-    at web3.js:5050:18
-    at web3.js:5075:23
-    at web3.js:4137:16
-    at apply (<native code>)
-    at web3.js:4223:16
-
-> 
+contract.burn({from:eth.accounts[0]})
 #+END_EXAMPLE
+
+The next step appears to be to set up some kind of unit testing.
 ** Miner bug
 The miner will leave all transactions in pendingTransactions until it
 finishes syncing.  With no other miners, it will never finish syncing.
