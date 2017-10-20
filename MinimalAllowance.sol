@@ -26,11 +26,20 @@ contract MinimalAllowance {
     return commences + (paid + this.balance)/rate;
   }
 
+  function owing() public view returns (uint256) {
+    return max((now-commences)*rate-paid,
+	       this.value);
+  }
+ 
   function payPayee() public afterCommencing {
-    var owing = (now-commences)*rate-paid;
-    require(owing > 0);
-    paid += owing;
-    payee.transfer(owing);
+    var _owing = owing();
+    if (_owing == this.value)
+      selfdestruct(payee);
+    else {
+      require(_owing > 0);
+      paid += _owing;
+      payee.transfer(_owing);
+    }
   }
 
   function burn() public onlyOwner {
