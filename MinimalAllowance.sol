@@ -18,7 +18,6 @@ contract MinimalAllowance {
     owner = msg.sender;
     payee = _payee;
     rate = _rate;
-    paid = 0;			/* I presume this is unneccesary. */
     commences = _commences;
   }
 
@@ -27,13 +26,15 @@ contract MinimalAllowance {
   }
 
   function owing() public view returns (uint256) {
-    return max((now-commences)*rate-paid,
-	       this.value);
+    var _owing = (now-commences)*rate-paid;
+    if (_owing > this.balance)	/* There is no max(). */
+      return this.balance;
+    return _owing;
   }
  
   function payPayee() public afterCommencing {
     var _owing = owing();
-    if (_owing == this.value)
+    if (_owing == this.balance)
       selfdestruct(payee);
     else {
       require(_owing > 0);
