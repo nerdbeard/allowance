@@ -64,23 +64,4 @@
    Only owner can call payPayee()
 * Dev notes
 ** Bookmark
-I am now creating contracts successfully the contracts have the data
-expected, and I can call methods as long as I remember to specify the sender; eg: 
-
-#+BEGIN_EXAMPLE
-contract.burn({from:eth.accounts[0]})
-#+END_EXAMPLE
-
-The next step appears to be to set up some kind of unit testing.
-** Miner bug
-The miner will leave all transactions in pendingTransactions until it
-finishes syncing.  With no other miners, it will never finish syncing.
-
-As a workaround, it appears you can start/stop/start mining before any
-transactions occur, and future transactions will be processed.
-** Makefile
-Needs to manage a test database for testing purposes. [[https://ethereum.stackexchange.com/questions/2376/what-does-each-genesis-json-parameter-mean][This page]] has
-some good info about the genesis block.
-
-"geth attach" takes an argument, the path to the IPC socket.  It does
-not use --datadir or --ipcpath like other commands!
+I have created the first working unit test.  Open road ahead; write the tests.
