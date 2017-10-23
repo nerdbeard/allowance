@@ -34,7 +34,8 @@ clean:
 start: testdb/geth.pid
 
 testdb/geth.pid: testdb/geth
-	nohup $(DEVGETH) --verbosity 2 >testdb/geth.out 2>&1& echo $$!>testdb/geth.pid
+	nohup $(DEVGETH) --verbosity 3 >testdb/geth.out 2>&1\
+		& echo $$!>testdb/geth.pid
 	until [ -S testdb/geth.ipc ] ; do sleep 0.1 ; done
 
 stop:
