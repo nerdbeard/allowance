@@ -1,8 +1,4 @@
-\.contract\.js$
-^testdb/geth$
-^testdb/geth.out$
-^testdb/geth.pid$
-^testdb/geth.pid.old$
-^testdb/history$
-_meta\.json$
 ~$
+^\.cache$
+^tests/__pycache__$
+^build$
