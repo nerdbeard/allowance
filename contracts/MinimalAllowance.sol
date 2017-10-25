@@ -9,12 +9,11 @@ contract MinimalAllowance {
   uint256 private paid;
   uint256 public commences;
 
-  modifier afterCommencing { require(now >= commences); _; }
   modifier onlyOwner { require(msg.sender == owner); _; }
 
   function MinimalAllowance(address _payee,
-			    uint256 _rate,
-			    uint256 _commences)
+                            uint256 _rate,
+                            uint256 _commences)
     public payable
   {
     owner = msg.sender;
@@ -23,32 +22,27 @@ contract MinimalAllowance {
     commences = _commences;
   }
 
-  function completes() private view returns (uint256) {
-    return commences + (paid + this.balance)/rate;
-  }
-
   function owing() private view returns (uint256) {
     if (commences >= now)
       return 0;
     var _owing = (now-commences)*rate-paid;
-    if (_owing > this.balance)	/* There is no max(). */
+    if (_owing > this.balance)  /* There is no max(). */
       return this.balance;
     return _owing;
   }
  
-  function payPayee() public afterCommencing {
+  function payPayee() public {
     var _owing = owing();
     if (_owing == this.balance)
-      selfdestruct(payee);
-    else {
-      require(_owing > 0);
+      return selfdestruct(payee);
+    if (_owing > 0) {
       paid += _owing;
       payee.transfer(_owing);
     }
   }
 
   function burn() public onlyOwner {
-    payPayee();			/* Pay what is currently owed. */
-    selfdestruct(this);		/* Burn the residue. */
+    payPayee();         /* Pay what is currently owed. */
+    selfdestruct(this); /* Burn the residue. */
   }
 }

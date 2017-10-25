@@ -64,14 +64,9 @@
    Only owner can call payPayee()
 * Dev notes
 ** Bookmark
-I've simplified the contract even further by making some members and
-methods private for a smaller runtime binary.
-
-Most of the tests are sensitive to the commences value in ways that I
-don't understand.  burn() should not be affected by commences at all,
-but is.  There is a value of commences where everything passes, and
-values higher and lower where different sets of tests fail.
-
+The absolute most-simple version of this contract I can see now passes
+its very basic tests.  I'm interested in extending it to more
+sophisticated versions, as well as providing a UI.
 ** Emacs environment
    The configuration for my devlopment environment.
 #+BEGIN_SRC emacs-lisp
