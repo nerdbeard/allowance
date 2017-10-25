@@ -1,5 +1,6 @@
 \.orig$
 ^\.cache$
 ^build$
+^logs$
 ^tests/__pycache__$
 ~$
