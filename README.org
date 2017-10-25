@@ -64,4 +64,23 @@
    Only owner can call payPayee()
 * Dev notes
 ** Bookmark
-I have created the first working unit test.  Open road ahead; write the tests.
+I've simplified the contract even further by making some members and
+methods private for a smaller runtime binary.
+
+Most of the tests are sensitive to the commences value in ways that I
+don't understand.  burn() should not be affected by commences at all,
+but is.  There is a value of commences where everything passes, and
+values higher and lower where different sets of tests fail.
+
+** Emacs environment
+   The configuration for my devlopment environment.
+#+BEGIN_SRC emacs-lisp
+  (progn
+    (setenv "PYTHONWARNINGS" "ignore:::cffi.model:532")
+    (global-whitespace-mode t)
+    (define-key global-map (kbd "C-c c")
+      (lambda () "Run unit tests"
+	(interactive)
+	(compile "cd /home/desktop/eth/allowance/ && populus compile && py.test --disable-warnings")))
+    'READY)
+#+END_SRC

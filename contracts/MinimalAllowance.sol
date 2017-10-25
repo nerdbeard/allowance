@@ -1,10 +1,12 @@
 pragma solidity ^0.4.17;
 
 contract MinimalAllowance {
-  address public owner;
+  // Make members private if possible to make the runtime binary
+  // smaller
+  address private owner;
   address public payee;
   uint256 public rate;
-  uint256 public paid;
+  uint256 private paid;
   uint256 public commences;
 
   modifier afterCommencing { require(now >= commences); _; }
@@ -21,11 +23,13 @@ contract MinimalAllowance {
     commences = _commences;
   }
 
-  function completes() public view returns (uint256) {
+  function completes() private view returns (uint256) {
     return commences + (paid + this.balance)/rate;
   }
 
-  function owing() public view returns (uint256) {
+  function owing() private view returns (uint256) {
+    if (commences >= now)
+      return 0;
     var _owing = (now-commences)*rate-paid;
     if (_owing > this.balance)	/* There is no max(). */
       return this.balance;
