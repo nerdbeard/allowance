@@ -6,7 +6,7 @@ contract MinimalAllowance {
   address private owner;
   address public payee;
   uint256 public rate;
-  uint256 private paid;
+  uint256 private value; /* The total ether value to be transferred */
   uint256 public commences;
 
   modifier onlyOwner { require(msg.sender == owner); _; }
@@ -25,7 +25,7 @@ contract MinimalAllowance {
   function owing() private view returns (uint256) {
     if (commences >= now)
       return 0;
-    var _owing = (now-commences)*rate-paid;
+    var _owing = (now - commences)*rate - value + this.balance;
     if (_owing > this.balance)  /* There is no max(). */
       return this.balance;
     return _owing;
@@ -35,10 +35,10 @@ contract MinimalAllowance {
     var _owing = owing();
     if (_owing == this.balance)
       return selfdestruct(payee);
-    if (_owing > 0) {
-      paid += _owing;
+    /* I *think* this method is immune to recursive attacks but needs
+       testing. */
+    if (_owing > 0)
       payee.transfer(_owing);
-    }
   }
 
   function burn() public onlyOwner {
